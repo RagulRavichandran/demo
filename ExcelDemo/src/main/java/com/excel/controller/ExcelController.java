@@ -1,15 +1,18 @@
 package com.excel.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.excel.service.ExcelService;
 
+@CrossOrigin
 @RestController
 public class ExcelController {
 
@@ -22,9 +25,12 @@ public class ExcelController {
         return excelService.getData();
     }
 
-    // You can also schedule it to send data at regular intervals
-    @Scheduled(fixedRate = 2000) // every 2 seconds
+    @Scheduled(fixedRate = 5000)
     public void sendDataAutomatically() {
-        sendExcelData();
+//        sendExcelData();
+        List<String[]> data = sendExcelData();
+
+        System.out.println("Sending data: " + Arrays.deepToString(data.toArray()));
+
     }
 }
