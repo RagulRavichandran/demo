@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Excel Client</title>
+</head>
+<body>
+    <h1>WebSocket Excel Client</h1>
+    <div id="excelData"></div>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:8080/websocket-excel/websocket');
+
+        // Connection opened
+        socket.addEventListener('open', function (event) {
+            console.log('WebSocket connection opened');
+        });
+
+        // Listen for messages from the server
+        socket.addEventListener('message', function (event) {
+            const excelData = JSON.parse(event.data);
+            console.log('Excel data received:', excelData);
+            displayExcelData(excelData);
+        });
+
+        // Listen for errors
+        socket.addEventListener('error', function (event) {
+            console.error('WebSocket error:', event);
+        });
+
+        // Listen for close
+        socket.addEventListener('close', function (event) {
+            console.log('WebSocket connection closed:', event);
+        });
+
+        // Function to display Excel data
+        function displayExcelData(data) {
+            const excelDiv = document.getElementById('excelData');
+            excelDiv.innerHTML = ''; // Clear previous data
+            
+            // Create a table to display Excel data
+            const table = document.createElement('table');
+            const headerRow = document.createElement('tr');
+
+            // Create header cells
+            for (let header of data[0]) {
+                const th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            }
+            table.appendChild(headerRow);
+
+            // Create rows and cells for each row of data
+            for (let i = 1; i < data.length; i++) {
+                const row = document.createElement('tr');
+                for (let cell of data[i]) {
+                    const td = document.createElement('td');
+                    td.textContent = cell;
+                    row.appendChild(td);
+                }
+                table.appendChild(row);
+            }
+
+            excelDiv.appendChild(table);
+        }
+    </script>
+</body>
+</html>
